@@ -1,9 +1,13 @@
 import 'dart:ui';
 
 import 'package:flame/game.dart';
+import 'package:flutter/gestures.dart';
 
 class BoxGame extends Game {
   Size screenSize;
+  double centerX;
+  double centerY;
+  bool hasWon = false;
 
   @override
   void render(Canvas canvas) {
@@ -14,11 +18,13 @@ class BoxGame extends Game {
     canvas.drawRect(bgRect, bgPaint);
 
     // draw white box
-    double screenCenterX = screenSize.width / 2;
-    double screenCenterY = screenSize.height / 2;
-    Rect boxRect = Rect.fromLTWH(screenCenterX - 75, screenCenterY - 75, 150, 150);
+    Rect boxRect = Rect.fromLTWH(centerX - 75, centerY - 75, 150, 150);
     Paint boxPaint = Paint();
-    boxPaint.color = Color(0xffffffff);
+    if (hasWon) {
+      boxPaint.color = Color(0xff00ff00);
+    } else {
+      boxPaint.color = Color(0xffffffff);
+    }
     canvas.drawRect(boxRect, boxPaint);
   }
 
@@ -30,6 +36,18 @@ class BoxGame extends Game {
   @override
   void resize(Size size) {
     screenSize = size;
+    centerX = screenSize.width / 2;
+    centerY = screenSize.height / 2;
     super.resize(size);
+  }
+
+  void onTapDown(TapDownDetails d) {
+    if (d.globalPosition.dx >= centerX - 75
+        && d.globalPosition.dx <= centerX + 75
+        && d.globalPosition.dy >= centerY - 75
+        && d.globalPosition.dy <= centerY + 75
+    ) {
+      hasWon = true;
+    }
   }
 }
